@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+try_dir="${TRY_DIR:-$HOME/try}"
+
+# get date in format YYYY-MM-DD
+date_prefix=$(date +%Y-%m-%d-)
+
+slugify_cmd="tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g'"
+
+folder=$(
+	# shellcheck disable=SC2012
+	ls "$try_dir" |
+		fzf \
+			--track \
+			--preview "tree $try_dir/{}" \
+			--prompt "> $date_prefix" \
+			--bind "change:transform-query(echo {q} | $slugify_cmd)+reload(echo $date_prefix{q}; ls \"$try_dir\")"
+)
+
+project_dir="$try_dir/$folder"
+
+function code() {
+	command code "$project_dir"
+}
+
+function finder() {
+	open "$project_dir"
+}
+
+actions=(
+	"code Open in VS Code"
+	"finder Open in Finder"
+)
+
+selected_actions=$(
+	printf '%s\n' "${actions[@]}" |
+		fzf --multi --accept-nth 1 --with-nth "{2..}"
+)
+
+mkdir -p "$project_dir"
+
+for action in $selected_actions; do
+	eval "$action"
+done
