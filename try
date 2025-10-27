@@ -5,7 +5,7 @@ set -euo pipefail
 current_dir="$(dirname "${BASH_SOURCE[0]}")"
 
 try_dir="${TRY_DIR:-$HOME/try}"
-try_actions_file="${TRY_ACTIONS_file:-$current_dir/lib/actions.sh}"
+try_actions_file="${TRY_ACTIONS_FILE:-$current_dir/lib/actions.sh}"
 
 # get date in format YYYY-MM-DD
 date_prefix=$(date +%Y-%m-%d-)
