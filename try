@@ -2,7 +2,10 @@
 
 set -euo pipefail
 
+current_dir="$(dirname "${BASH_SOURCE[0]}")"
+
 try_dir="${TRY_DIR:-$HOME/try}"
+try_actions_file="${TRY_ACTIONS_file:-$current_dir/lib/actions.sh}"
 
 # get date in format YYYY-MM-DD
 date_prefix=$(date +%Y-%m-%d-)
@@ -22,18 +25,8 @@ folder=$(
 
 project_dir="$try_dir/$folder"
 
-function code() {
-	command code "$project_dir"
-}
-
-function finder() {
-	open "$project_dir"
-}
-
-actions=(
-	"code Open in VS Code"
-	"finder Open in Finder"
-)
+#shellcheck source=./lib/actions/macos.sh
+source "$try_actions_file"
 
 selected_actions=$(
 	printf '%s\n' "${actions[@]}" |
@@ -43,5 +36,5 @@ selected_actions=$(
 mkdir -p "$project_dir"
 
 for action in $selected_actions; do
-	eval "$action"
+	eval "$action" "$project_dir"
 done
