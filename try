@@ -14,6 +14,7 @@ folder=$(
 	ls "$try_dir" |
 		fzf \
 			--track \
+			--no-clear \
 			--preview "tree $try_dir/{}" \
 			--prompt "> $date_prefix" \
 			--bind "change:transform-query(echo {q} | $slugify_cmd)+reload(echo $date_prefix{q}; ls \"$try_dir\")"
